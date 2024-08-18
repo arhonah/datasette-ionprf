@@ -1,0 +1,42 @@
+[
+  {
+    "id":"document",
+    "name":"{{ kml_name }}",
+    "version":"1.0",
+    "clock":{
+      "interval":"{{ MinTime }}Z/{{ MaxTime }}Z",
+      "currentTime":"{{ MinTime }}",
+      "multiplier":60,
+      "range":"LOOP_STOP",
+      "step":"SYSTEM_CLOCK_MULTIPLIER"
+    }
+  },
+{% block czml_all_qsos %}{%- for row in Rows %}  {
+    "id":"{{ row['Spotter'] }}",
+    "name":"{{ row['Spotter'] }}",
+    "description":"<H2>{{ row['Spotter'] }}</H2><table><tr><td>datetime = {{ row['timestamp'] }}</td></tr><tr><td>rst = {{ row['dB'] }}</td></tr></table>",
+    "polyline":{
+      "positions":{
+        "cartographicDegrees":[{{ row['tx_lng'] }},{{ row['tx_lat'] }},0.0, {{ row['tx_lng'] }},{{ row['tx_lat'] }},{{ row['alt'] }}]
+      },
+      "material":{
+        "solidColor":{
+          "color":{
+            "rgba":{{ line_color(row['dB']) }}
+          }
+        }
+      },
+      "show":[
+          {
+              "interval":"{{ MinTime }}Z/{{ TotMapEnd }}Z",
+              "boolean":true
+          }
+      ],
+      
+      "width":5,
+      "relativeToGround":true
+    }
+  }{{ "," if not loop.last }}
+{%- endfor %}{% endblock %}
+
+]
